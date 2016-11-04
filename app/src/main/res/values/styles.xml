@@ -1,0 +1,82 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorPrimary">@color/textColorPrimaryLight</item>
+        <item name="textColorSecondary">@color/textColorSecondaryLight</item>
+        <item name="textColorTertiary">@color/textColorTertiaryLight</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryLightInverted</item>
+        <item name="textColorSecondaryInverse">@color/textColorSecondaryLightInverted</item>
+        <item name="backgroundColor">@color/colorPrimary</item>
+        <item name="fab_label_background_color">@color/fab_label_background_color_light</item>
+
+
+    </style>
+
+
+
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryInverted</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkInverted</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorPrimary">@color/textColorPrimaryLightInverted</item>
+        <item name="textColorSecondary">@color/textColorSecondaryLightInverted</item>
+        <item name="textColorTertiary">@color/textColorTertiaryLightInverted</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryLight</item>
+        <item name="textColorSecondaryInverse">@color/textColorSecondaryLight</item>
+        <item name="backgroundColor">@color/colorPrimaryInverted</item>
+        <item name="fab_label_background_color">@color/fab_label_background_color_dark</item>
+
+    </style>
+
+
+
+    <style name="AppTheme.NoActionBar" >
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="AppTheme" />
+
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+
+    <style name="menu_labels_style">
+        <item name="android:background">?attr/fab_label_background_color</item>
+        <item name="android:textColor">?attr/textColorSecondary</item>
+        <item name="android:padding">4dp</item>
+
+    </style>
+
+    <style name="dialog_animation">
+       <!-- <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+-->
+    </style>
+
+
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorPrimary">@color/textColorPrimaryLight</item>
+        <item name="textColorSecondary">@color/textColorSecondaryLight</item>
+        <item name="textColorTertiary">@color/textColorTertiaryLight</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryLightInverted</item>
+        <item name="textColorSecondaryInverse">@color/textColorSecondaryLightInverted</item>
+        <item name="backgroundColor">@color/colorPrimary</item>
+        <item name="fab_label_background_color">@color/fab_label_background_color_light</item>
+    </style>
+
+</resources>

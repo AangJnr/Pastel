@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:gravity="top|start"
+    app:theme="@style/CustomToolbar"
+    app:popupTheme="@style/AppTheme.PopupOverlay"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="?attr/textColorPrimary"
+            android:layout_centerVertical="true"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            />
+
+        <ImageView
+            android:id="@+id/night_mode_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/night"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:tint="?attr/textColorSecondary"
+            android:layout_margin="@dimen/activity_margin"
+            />
+    </RelativeLayout>
+
+
+</android.support.v7.widget.Toolbar>

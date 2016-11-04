@@ -1,0 +1,59 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorPrimary">@color/textColorPrimaryLight</item>
+        <item name="textColorSecondary">@color/textColorSecondaryLight</item>
+        <item name="textColorTertiary">@color/textColorTertiaryLight</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryLightInverted</item>
+        <item name="textColorSecondaryInverse">@color/textColorSecondaryLightInverted</item>
+        <item name="backgroundColor">@color/colorPrimary</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="fab_label_background_color">@color/fab_label_background_color_light</item>
+        <item name="android:toolbarStyle">@style/CustomToolbar</item>
+
+    </style>
+
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryInverted</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkInverted</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorPrimary">@color/textColorPrimaryLightInverted</item>
+        <item name="textColorSecondary">@color/textColorSecondaryLightInverted</item>
+        <item name="textColorTertiary">@color/textColorTertiaryLightInverted</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryLight</item>
+        <item name="textColorSecondaryInverse">@color/textColorSecondaryLight</item>
+        <item name="backgroundColor">@color/colorPrimaryInverted</item>
+        <item name="fab_label_background_color">@color/fab_label_background_color_dark</item>
+
+    </style>
+
+
+
+    <style name="CustomToolbar" parent ="">
+        <item name="android:textColorPrimary">?attr/textColorSecondary</item>
+        <item name="android:textColorSecondary">?attr/textColorSecondary</item>
+
+
+    </style>
+
+
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">?attr/textColorSecondary</item>
+    </style>
+</resources>

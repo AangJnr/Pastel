@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    //Light Colors
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#ff477dd6</color>
+    <color name="fabStatePressed">#688ece</color>
+    <color name="textColorPrimaryLight">@android:color/primary_text_light</color>
+    <color name="textColorSecondaryLight">@android:color/secondary_text_light</color>
+    <color name="textColorTertiaryLight">@android:color/tertiary_text_light</color>
+    <color name="fab_label_background_color_light">#d1d1d1</color>
+
+
+
+
+
+
+    //Inverted colors
+    <color name="colorPrimaryInverted">#272727</color>
+    <color name="colorPrimaryDarkInverted">#272727</color>
+    <color name="textColorPrimaryLightInverted">@android:color/primary_text_dark</color>
+    <color name="textColorSecondaryLightInverted">@android:color/secondary_text_dark</color>
+    <color name="textColorTertiaryLightInverted">@android:color/tertiary_text_dark</color>
+    <color name="fab_label_background_color_dark">#4e4e4e</color>
+
+
+
+    //Others
+
+
+</resources>

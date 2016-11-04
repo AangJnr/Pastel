@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ind.aang.pastel.MainActivity">
+
+    <item
+        android:id="@+id/backup"
+        app:actionViewClass="android.widget.CheckBox"
+        android:checkable="true"
+        android:title="@string/backup"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/restore"
+        android:title="@string/restore"
+        app:showAsAction="never"/>
+
+</menu>

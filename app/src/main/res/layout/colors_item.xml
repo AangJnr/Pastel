@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:circleview="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/cv_linear_lay"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:transitionName="@string/transition_name"
+
+    >
+
+
+    <ind.aang.pastel.CircleView
+        android:id="@+id/color_view"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        circleview:circleRadius="30dp"
+
+
+        />
+
+
+
+
+    <TextView
+        android:id="@+id/color_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="Color name"
+        android:layout_gravity="center_horizontal"
+        android:textColor="?attr/textColorSecondary"
+        android:fontFamily="sans-serif-condensed"
+        />
+
+
+
+</LinearLayout>

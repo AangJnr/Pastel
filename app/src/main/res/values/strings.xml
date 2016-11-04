@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Pastel</string>
+    <string name="action_settings">Settings</string>
+    <string name="prefs_theme_key">theme</string>
+    <string name="prefs_signed_in">isSignedIn</string>
+    <string name="prefs_user_uid">uid</string>
+    <string name="prefs_backup">backupEnabled</string>
+    <string name="sign_up_rationale">You must Sign in with Google to enable online backup</string>
+    <string name="no_colors">Nothing here yet.</string>
+    <string name="add_colors_text">Add colors by clicking on the button below</string>
+    <string name="backup">Enable online backup</string>
+    <string name="restore">Restore backup</string>
+    <string name="night_mode">Night mode</string>
+    <string name="transition_name">transition</string>
+</resources>
