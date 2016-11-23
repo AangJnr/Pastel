@@ -1,11 +1,19 @@
 package ind.aang.pastel;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -17,29 +25,44 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.WindowManager.LayoutParams;
 
-
+import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by AangJnr on 10/8/16.
  */
-public class ImageColorPickerActivity extends AppCompatActivity {
+public class ImageColorPickerActivity extends AppCompatActivity implements View.OnTouchListener{
     RecyclerView mRecycler;
     static List<Palette.Swatch> swatchList;
     GridLayoutManager mLayoutManager;
-    Bitmap bitmap;
+
     SwatchItemsAdapter mAdapter;
     View mView;
     AlertDialog alertDialogAndroid;
     DataBaseHelper colorsDatabase;
     FloatingActionButton fab_image_picker;
+    Bitmap bitmap;
+    int PERMISSION_CAMERA = 1;
+    int PERMISSION_STORAGE = 2;
+    WindowManager windowManager;
+    float dX;
+    float dY;
+    int lastAction;
+    View floating_layout;
+    ImageView image;
 
 
     @Override
@@ -47,20 +70,42 @@ public class ImageColorPickerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         updateTheme();
         setContentView(R.layout.image_picker_activity);
+        image = (ImageView) findViewById(R.id.image);
 
+        int requestCode = getIntent().getIntExtra("requestCode", 0);
         String decoded_image = getIntent().getStringExtra("decodedImageString");
-        ImageView image = (ImageView) findViewById(R.id.image);
-        bitmap = getScaledBitmap(decoded_image,
-                Utils.getScreenWidth(this), Utils.getScreenHeight(this));
+        String bytes = getIntent().getStringExtra("PHOTO_BITMAP");
 
-                image.setImageBitmap(bitmap);
+        //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT).show();
+
+        if (requestCode == PERMISSION_STORAGE) {
+
+
+            Toast.makeText(this, "Gallery intent " + decoded_image, Toast.LENGTH_SHORT).show();
+
+
+            bitmap = getScaledBitmap(decoded_image,
+                    Utils.getScreenWidth(this), Utils.getScreenHeight(this));
+
+            image.setImageBitmap(bitmap);
+        } else if (requestCode == PERMISSION_CAMERA) {
+
+            Toast.makeText(this, "Camera intent " + bytes, Toast.LENGTH_SHORT).show();
+
+
+            bitmap = getScaledBitmap(bytes,
+                    Utils.getScreenWidth(this), Utils.getScreenHeight(this));
+
+
+            image.setImageBitmap(bitmap);
+
+        }
+
+
         colorsDatabase = new DataBaseHelper(this);
 
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
-
-
-
 
 
         final Palette.PaletteAsyncListener paletteListener = new Palette.PaletteAsyncListener() {
@@ -86,16 +131,26 @@ public class ImageColorPickerActivity extends AppCompatActivity {
                 showSwatchList();
 
 
-
             }
         });
 
 
+        final RelativeLayout rl = (RelativeLayout) findViewById(R.id.image_relative_layout);
+        floating_layout = getLayoutInflater().inflate(R.layout.floating_layout, rl, false);
+
+        final RelativeLayout.LayoutParams params;
+        params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        rl.addView(floating_layout, params);
+        floating_layout.setVisibility(View.GONE);
 
 
-
-
+        image.setOnTouchListener(this);
     }
+
+
+
+
 
     public void updateTheme() {
         if (Utils.getTheme(getApplicationContext()) <= Constants.LIGHT_THEME) {
@@ -239,19 +294,115 @@ public class ImageColorPickerActivity extends AppCompatActivity {
     };
 
     public void onBackPressed(){
-        super.onBackPressed();
+        //super.onBackPressed();
         refreshActivity();
-        //finish();
+        finish();
 
     }
+
+
 
     public void refreshActivity() {
         Intent intent = new Intent(ImageColorPickerActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        finish();
+
         overridePendingTransition(0, 0);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+
+        final Bitmap loaded_bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
+
+        int xCord;
+        int yCord;
+        float[] touchPoint;
+        Matrix inverse = new Matrix();
+
+        if(floating_layout.getVisibility() == View.GONE)
+            floating_layout.setVisibility(View.VISIBLE);
+
+
+
+
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                image.getImageMatrix().invert(inverse);
+                touchPoint = new float[] {event.getX(), event.getY()};
+                inverse.mapPoints(touchPoint);
+                xCord = Integer.valueOf((int)touchPoint[0]);
+                yCord = Integer.valueOf((int)touchPoint[1]);
+
+                floating_layout.animate()
+                        .x(event.getX())
+                        .y(event.getY())
+                        .setDuration(500)
+                        .start();
+
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+
+                image.getImageMatrix().invert(inverse);
+                touchPoint = new float[] {event.getX(), event.getY()};
+                inverse.mapPoints(touchPoint);
+                xCord = Integer.valueOf((int)touchPoint[0]);
+                yCord = Integer.valueOf((int)touchPoint[1]);
+
+
+                if(loaded_bitmap != null )
+
+                floating_layout.animate()
+                        .x(event.getX())
+                        .y(event.getY())
+                        .setDuration(0)
+                        .start();
+                CircleView circle = (CircleView) floating_layout.findViewById(R.id.circle);
+                floating_layout.setBackgroundColor(getProjectedColor((ImageView)view, bitmap , (int)event.getX(), (int)event.getY()));
+
+                /*Toast.makeText(ImageColorPickerActivity.this, redValue + " " + blueValue  + " " + greenValue
+                        , Toast.LENGTH_SHORT).show();
+*/
+                break;
+
+            case MotionEvent.ACTION_UP:
+
+                touchPoint = new float[] {event.getX(), event.getY()};
+                inverse.mapPoints(touchPoint);
+                xCord = Integer.valueOf((int)touchPoint[0]);
+                yCord = Integer.valueOf((int)touchPoint[1]);
+
+
+                if(loaded_bitmap != null )
+
+                    floating_layout.setBackgroundColor(getProjectedColor((ImageView)view, bitmap , (int)event.getX(), (int)event.getY()));
+
+                break;
+            default:
+                return false;
+        }
+        return true;
+
+    }
+
+    private int getProjectedColor(ImageView iv, Bitmap bm, int x, int y){
+        if(x<0 || y<0 || x > iv.getWidth() || y > iv.getHeight()){
+            //outside ImageView
+            return android.R.color.white;
+        }else{
+            int projectedX = (int)((double)x * ((double)bm.getWidth()/(double)iv.getWidth()));
+            int projectedY = (int)((double)y * ((double)bm.getHeight()/(double)iv.getHeight()));
+
+            /*Toast.makeText(this, x + ":" + y + "/" + iv.getWidth() + " : " + iv.getHeight() + "\n" +
+                            projectedX + " : " + projectedY + "/" + bm.getWidth() + " : " + bm.getHeight()
+                    , Toast.LENGTH_SHORT).show();*/
+
+
+            return bm.getPixel(projectedX, projectedY);
+        }
+    }
 }

@@ -1,13 +1,19 @@
 package ind.aang.pastel;
 
+import android.*;
+import android.Manifest;
 import android.animation.Animator;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -20,13 +26,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +43,9 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,12 +59,20 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionsMenu multi_actions;
     String imgDecodableString;
 
+    int PERMISSION_CAMERA = 1;
+    int PERMISSION_STORAGE = 2;
+    Uri selectedImagePath;
+    private String mCurrentPhotoPath;
+
+    private static final int CAMERA_REQUEST = 1888;
+    String[] PERMISSIONS = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA};
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
         updateTheme();
 
@@ -81,7 +101,20 @@ public class MainActivity extends AppCompatActivity {
 
                 //Capture and set imageView
                 multi_actions.collapse();
-                Toast.makeText(MainActivity.this, "Coming soon! Pro.", Toast.LENGTH_SHORT).show();
+                if(!hasPermissions(getApplicationContext(), android.Manifest.permission.CAMERA)){
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+                }else {
+
+                    //Toast.makeText(MainActivity.this, "Coming soon! Pro.", Toast.LENGTH_SHORT).show();
+                    startCameraIntent();
+
+
+
+
+
+
+                }
+
             }
         });
 
@@ -116,11 +149,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 multi_actions.collapse();
-                loadImagefromGallery();
-                //finish();
-                //startActivity(new Intent(MainActivity.this, ImageColorPickerActivity.class));
 
+                if(!hasPermissions(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_STORAGE);
+                }else {
+                    loadImagefromGallery();
 
+                }
 
             }
         });
@@ -171,9 +206,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        mRecycler.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(multi_actions.isExpanded()){
+                    multi_actions.collapse();
+
+                }
+                return false;
+            }
+        });
+
         mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if(multi_actions.isExpanded()){
+                    multi_actions.collapse();
+
+                }
+
                 //super.onScrolled(recyclerView, dx, dy);
                 if (dy < 0 ) {
                    // multi_actions.setTranslationY(0);
@@ -224,43 +276,74 @@ public class MainActivity extends AppCompatActivity {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // Start the Intent
         startActivityForResult(galleryIntent, Constants.RESULT_LOAD_IMG);
+
+
+
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            // When an Image is picked
-            if (requestCode == Constants.RESULT_LOAD_IMG && resultCode == RESULT_OK
-                    && null != data) {
-                // Get the Image from data
 
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            if (resultCode == RESULT_OK) {
+                // When an Image is picked
+                if (requestCode == Constants.RESULT_LOAD_IMG) {
+                    // Get the Image from data
 
-                // Get the cursor
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                // Move to first row
-                cursor.moveToFirst();
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                imgDecodableString = cursor.getString(columnIndex);
-                cursor.close();
+                    // Get the cursor
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    // Move to first row
+                    cursor.moveToFirst();
 
-                if(imgDecodableString != null){
-                    //Start ImageActivity
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imgDecodableString = cursor.getString(columnIndex);
+                    cursor.close();
 
-                    Intent intent = new Intent (MainActivity.this, ImageColorPickerActivity.class);
-                    intent.putExtra("decodedImageString", imgDecodableString);
-                    startActivity(intent);
-                    finish();
+                    if (imgDecodableString != null) {
+                        //Start ImageActivity
+
+                        Intent intent = new Intent(MainActivity.this, ImageColorPickerActivity.class);
+                        intent.putExtra("requestCode", PERMISSION_STORAGE);
+                        intent.putExtra("decodedImageString", imgDecodableString);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                } else if (requestCode == CAMERA_REQUEST) {
+
+                    String[] projection = { MediaStore.Images.Media.DATA };
+                    Cursor cursor = getContentResolver().query(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            projection, null, null, null);
+                    int column_index_data = cursor
+                            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToLast();
+
+                    String imagePath = cursor.getString(column_index_data);
+                    cursor.close();
+
+                        if(imagePath != null) {
+                       Intent intent = new Intent(MainActivity.this, ImageColorPickerActivity.class);
+                        intent.putExtra("requestCode", PERMISSION_CAMERA);
+                        intent.putExtra("PHOTO_BITMAP", imagePath);
+                        startActivity(intent);
+                        finish();
+                        }
+
+                    }
+
+
+                } else {
+                    Toast.makeText(this, "You haven't picked an Image",
+                            Toast.LENGTH_LONG).show();
                 }
 
-            } else {
-                Toast.makeText(this, "You haven't picked Image",
-                        Toast.LENGTH_LONG).show();
-            }
         } catch (Exception e) {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
                     .show();
@@ -279,6 +362,25 @@ public class MainActivity extends AppCompatActivity {
         final EditText color_code_EditText = (EditText) mView.findViewById(R.id.userInputDialog);
         //if(color_code_EditText.hasFocus()) color_code_EditText.setError(null);
         color_code_EditText.setText("#");
+        color_code_EditText.requestFocus();
+        color_code_EditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b) {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(color_code_EditText, InputMethodManager.SHOW_IMPLICIT);
+                }else {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(color_code_EditText.getWindowToken(), 0);
+
+                }
+            }
+        });
+
+
+
         alertDialogBuilderUserInput
                 .setCancelable(true);
         final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
@@ -746,17 +848,125 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        super.onBackPressed();
+        //super.onBackPressed();
+        if(multi_actions.isExpanded()){
+            multi_actions.collapseImmediately();
+        }
+        else{
+
         finish();
     }
+    }
+
 
     @Override
     public void onResume(){
         super.onResume();
+        if(mAdapter != null)
         mAdapter.notifyDataSetChanged();
 
 
     }
 
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permission, grantResults);
+
+
+
+        if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+           // Toast.makeText(this, permission[0], Toast.LENGTH_SHORT).show();
+
+            if (requestCode == PERMISSION_STORAGE) {
+
+
+                //resume tasks needing this permission
+                loadImagefromGallery();
+
+            } else if (requestCode == PERMISSION_CAMERA) {
+
+
+                startCameraIntent();
+
+                //Toast.makeText(MainActivity.this, "Coming soon! Pro.", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
+    }
+
+
+
+    public boolean hasPermissions(Context context, String permission) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null) {
+
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+
+
+                    }
+                    return false;
+                }
+
+        }
+        return true;
+    }
+
+
+
+
+
+
+    public void startCameraIntent() {
+
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+
+        String imageFileName = "temp";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  // prefix
+                ".jpg",         // suffix
+                storageDir      // directory
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+
+
+/*public static boolean hasPermissions(Context context, String... permissions) {
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+        for (String permission : permissions) {
+            if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+Then just send it all of the permissions. Android will ask only for the ones it needs.
+
+// The request code used in ActivityCompat.requestPermissions()
+// and returned in the Activity's onRequestPermissionsResult()
+int PERMISSION_ALL = 1;
+String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_SMS, Manifest.permission.CAMERA};
+
+if(!hasPermissions(this, PERMISSIONS)){
+    ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+}
+*/
 
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin">
+
+    <ind.aang.pastel.CircleView
+        android:id="@+id/circle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:fillColor="@color/colorAccent"
+        app:circleRadius="25dp"
+        >
+    </ind.aang.pastel.CircleView>
+
+</RelativeLayout>
