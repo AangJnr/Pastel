@@ -73,7 +73,9 @@ public class ImageColorPickerActivity extends AppCompatActivity implements View.
         image = (ImageView) findViewById(R.id.image);
 
         int requestCode = getIntent().getIntExtra("requestCode", 0);
+
         String decoded_image = getIntent().getStringExtra("decodedImageString");
+
         String bytes = getIntent().getStringExtra("PHOTO_BITMAP");
 
         //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT).show();
@@ -88,6 +90,8 @@ public class ImageColorPickerActivity extends AppCompatActivity implements View.
                     Utils.getScreenWidth(this), Utils.getScreenHeight(this));
 
             image.setImageBitmap(bitmap);
+
+
         } else if (requestCode == PERMISSION_CAMERA) {
 
             Toast.makeText(this, "Camera intent " + bytes, Toast.LENGTH_SHORT).show();
