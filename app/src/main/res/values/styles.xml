@@ -12,11 +12,7 @@
         <item name="textColorSecondaryInverse">@color/textColorSecondaryLightInverted</item>
         <item name="backgroundColor">@color/colorPrimary</item>
         <item name="fab_label_background_color">@color/fab_label_background_color_light</item>
-
-
     </style>
-
-
 
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
